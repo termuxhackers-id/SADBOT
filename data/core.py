@@ -465,11 +465,9 @@ class EXPLOIT:
             print(w+"<option>")
             print(w+"   -l/--list      show key code list")
             print(w+"   -e/--exec      exec key code")
-            print(w+"   -w/--write     keyboard writing")
             print(w+"<example>")
             print(w+"   usekey --list")
             print(w+"   usekey -e 18")
-            print(w+"   usekey -w test")
             print(w)
         elif num == int(3):
             print(w)
