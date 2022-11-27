@@ -4,6 +4,8 @@
 SADBOT - A simple tool for exploitation on android devices via ADB, users can find vulnerable devices using shodan search.
 ### Disclaimer
 The author is not responsible for any loses or damage caused by this programs.
+### Requirements
+This tool is require Shodan Apikey, Get your shodan apikey from [shodan.io](https://account.shodan.io)
 ### Installation
 Quick installation for Ubuntu, Kali Linux, Debian
 ```bash
